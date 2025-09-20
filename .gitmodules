@@ -1,0 +1,6 @@
+[submodule "cs411-2025-03"]
+	path = cs411-2025-03
+	url = https://github.com/ggchappell/cs411-2025-03.git
+[submodule "doctest"]
+	path = doctest
+	url = https://github.com/doctest/doctest.git

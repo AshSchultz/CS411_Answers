@@ -3,10 +3,13 @@
 
 int bridges(int w, int e, const vector<Bridge> & bridges) 
 {
-	std::cout << "Hello world!" << std::endl;
-	if (w >= 0)
+	size_t size = bridges.size();
+	if (size < 1)
 	{
-		std::cout << "Something?" << std::endl;
+		return 0;
+	} else if (size == 1)
+	{
+		return bridges[0][2];
 	}
 	
 	return 0;

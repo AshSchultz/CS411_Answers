@@ -1,6 +1,6 @@
 /**
  * contigsum.hpp
- * 
+ * by Ashley Schultz
  * 
  * Solution for homework 3
  * Source for function contigsum

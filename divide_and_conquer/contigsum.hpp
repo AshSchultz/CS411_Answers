@@ -4,6 +4,7 @@
  * 
  * Solution for homework 3 (divide and conquer)
  * Source for function contigsum
+ * LAST MODIFIED: 2025-10-7
  */
 #ifndef CONTIGSUM
 #define CONTIGSUM

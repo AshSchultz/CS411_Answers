@@ -8,7 +8,7 @@
  * this link https://github.com/ggchappell/cs411-2025-03/blob/main/merge_sort.cpp
  * These functions were modified in the course of this assignment, modifications are
  * marked by the author.
- * 
+ * LAST MODIFIED: 2025-10-7
  */
 
 #ifndef INVERSIONS

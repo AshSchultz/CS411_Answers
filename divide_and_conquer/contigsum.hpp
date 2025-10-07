@@ -2,7 +2,7 @@
  * contigsum.hpp
  * by Ashley Schultz
  * 
- * Solution for homework 3
+ * Solution for homework 3 (divide and conquer)
  * Source for function contigsum
  */
 #ifndef CONTIGSUM
@@ -16,8 +16,10 @@ using std::vector;
 using std::max;
 
 
-// Recursive function that returns the Greatest Contiguous Sum (GCS) of a sequence of integers.
-// Takes iterators to the first and last elements of a sequence of integers
+// Recursive function that returns the Greatest Contiguous Sum (GCS) of a 
+// sequence of integers.
+// Pre:
+//     [first, last) is a valid range.
 template<typename RAIter>
 int contigSum(RAIter first, RAIter last) {
     size_t size = static_cast<size_t>(last - first);

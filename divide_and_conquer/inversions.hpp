@@ -1,3 +1,16 @@
+/**
+ * inversions.hpp
+ * by Ashley Schultz
+ * 
+ * Solution for assignment 3 (divide and conquer)
+ * 
+ * mergeSort and stableMerge authored by Glen G. Chappell from
+ * this link https://github.com/ggchappell/cs411-2025-03/blob/main/merge_sort.cpp
+ * These functions were modified in the course of this assignment, modifications are
+ * marked by the author.
+ * 
+ */
+
 #ifndef INVERSIONS
 #define INVERSIONS
 
@@ -32,6 +45,7 @@ using std::abs;
 // stableMerge
 // Merge two halves of a sequence, each sorted, into a single sorted
 // sequence in the same location. Merge is done in a stable manner.
+// MODIFICATION: returns the total number of inversions done by merging
 // Requirements on Types:
 //     FDIter is a forward iterator type.
 //     The value type of FDIter has default ctor, dctor, copy=,
@@ -40,6 +54,7 @@ using std::abs;
 // Pre:
 //     [first, middle) and [middle, last) are valid ranges, each sorted
 //      by <.
+//     MODIFICATION:
 //     middle points to a value further in the list then first
 template <typename FDIter>
 size_t stableMerge(FDIter first, FDIter middle, FDIter last)
@@ -47,6 +62,7 @@ size_t stableMerge(FDIter first, FDIter middle, FDIter last)
     // Get type of what iterators point to
     using Value = typename iterator_traits<FDIter>::value_type;
 
+    // MODIFICATION: add a static cast to size_t to silence compiler warning -Wsign-conversion
     vector<Value> buffer(static_cast<size_t>(distance(first, last)));
                                // Buffer for temporary copy of data
     auto in1 = first;          // Read location in 1st half
@@ -54,11 +70,13 @@ size_t stableMerge(FDIter first, FDIter middle, FDIter last)
     auto out = begin(buffer);  // Write location in buffer
 
     // Merge two sorted lists into a single list in buff.
+    // MODIFICATION: initialize variable to hold total inversions, to return later
     size_t inversions = 0;
     while (in1 != middle && in2 != last)
     {
         if (*in2 < *in1)  // Must do comparison this way, to be stable.
         {
+            // MODIFICATION: sum the number of inversions from each merge
             inversions += static_cast<size_t>(distance(first, in2)-distance(begin(buffer), out));
             *out++ = std::move(*in2++);
         }
@@ -79,13 +97,14 @@ size_t stableMerge(FDIter first, FDIter middle, FDIter last)
 
     // Move buffer contents back to original sequence location.
     move(begin(buffer), end(buffer), first);
-
+    // MODIFICATION: return total number of inversions
     return inversions;
 }
 
 
 // mergeSort
-// Sort a range using Merge Sort.
+// Sort a range using Merge Sort MODIFICATION: Returns the number 
+// of inversions from merging
 // Recursive.
 // Requirements on Types:
 //     FDIter is a forward iterator type.
@@ -110,15 +129,23 @@ size_t mergeSort(FDIter first, FDIter last)
     // Create iterator to middle of range
     auto middle = next(first, size/2);
 
+    // MODIFICATION: sum up total inversions from each recursive call
+    // and the final merge, store it in totalInversions
     size_t totalInversions = 0;
     // Recursively sort the two lists
     totalInversions += mergeSort(first, middle);
     totalInversions += mergeSort(middle, last);
-    totalInversions += stableMerge(first, middle, last);
     // And merge them
+    totalInversions += stableMerge(first, middle, last);
+    // MODIFICATION: Return totalInversions
     return totalInversions;
 }
 
+// inversions
+// wrapper function that calls mergesort, which returns
+// the number of inversions done by sorting the sequence
+// Pre:
+//     [first, last) is a valid range.
 template<typename RAIter>
 size_t inversions(RAIter first, RAIter last){
     return mergeSort(first, last);

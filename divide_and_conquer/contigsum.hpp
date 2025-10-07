@@ -14,14 +14,13 @@
 
 using std::vector;
 using std::max;
-using std::cout;
 
 
 // Recursive function that returns the Greatest Contiguous Sum (GCS) of a sequence of integers.
 // Takes iterators to the first and last elements of a sequence of integers
 template<typename RAIter>
 int contigSum(RAIter first, RAIter last) {
-    long int size = last - first;
+    size_t size = static_cast<size_t>(last - first);
     // BASE CASE
     if (size <= 1)
     {

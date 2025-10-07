@@ -1,14 +1,33 @@
 #ifndef INVERSIONS
 #define INVERSIONS
 
+#include <iostream>
+using std::cout;
+using std::endl;
+using std::cin;
+#include <string>
+using std::string;
+using std::to_string;
+#include <vector>
+using std::vector;
+#include <cstddef>
+using std::size_t;
+#include <utility>
+using std::move;
 #include <iterator>
-#include <cstdint>
-
-template<typename RAIter>
-size_t inversions(RAIter first, RAIter last){
-    return 0;
-}
-
+using std::begin;
+using std::end;
+using std::distance;
+using std::next;
+using std::iterator_traits;
+#include <algorithm>
+using std::move;
+using std::swap;
+#include <chrono>
+// Everything from <chrono> is preceded by std::
+#include <cassert>
+// For assert
+using std::abs;
 
 // stableMerge
 // Merge two halves of a sequence, each sorted, into a single sorted
@@ -21,25 +40,32 @@ size_t inversions(RAIter first, RAIter last){
 // Pre:
 //     [first, middle) and [middle, last) are valid ranges, each sorted
 //      by <.
+//     middle points to a value further in the list then first
 template <typename FDIter>
-void stableMerge(FDIter first, FDIter middle, FDIter last)
+size_t stableMerge(FDIter first, FDIter middle, FDIter last)
 {
     // Get type of what iterators point to
     using Value = typename iterator_traits<FDIter>::value_type;
 
-    vector<Value> buffer(distance(first, last));
+    vector<Value> buffer(static_cast<size_t>(distance(first, last)));
                                // Buffer for temporary copy of data
     auto in1 = first;          // Read location in 1st half
     auto in2 = middle;         // Read location in 2nd half
     auto out = begin(buffer);  // Write location in buffer
 
     // Merge two sorted lists into a single list in buff.
+    size_t inversions = 0;
     while (in1 != middle && in2 != last)
     {
         if (*in2 < *in1)  // Must do comparison this way, to be stable.
+        {
+            inversions += static_cast<size_t>(distance(first, in2)-distance(begin(buffer), out));
             *out++ = std::move(*in2++);
+        }
         else
+        {
             *out++ = std::move(*in1++);
+        }
     }
 
     // Move remainder of original sequence to buffer.
@@ -53,6 +79,8 @@ void stableMerge(FDIter first, FDIter middle, FDIter last)
 
     // Move buffer contents back to original sequence location.
     move(begin(buffer), end(buffer), first);
+
+    return inversions;
 }
 
 
@@ -67,7 +95,7 @@ void stableMerge(FDIter first, FDIter middle, FDIter last)
 // Pre:
 //     [first, last) is a valid range.
 template <typename FDIter>
-void mergeSort(FDIter first, FDIter last)
+size_t mergeSort(FDIter first, FDIter last)
 {
     // Compute size of range
     auto size = distance(first, last);
@@ -75,19 +103,24 @@ void mergeSort(FDIter first, FDIter last)
     // BASE CASE
 
     if (size <= 1)
-        return;
+        return 0;
 
     // RECURSIVE CASE
 
     // Create iterator to middle of range
     auto middle = next(first, size/2);
 
+    size_t totalInversions = 0;
     // Recursively sort the two lists
-    mergeSort(first, middle);
-    mergeSort(middle, last);
-
+    totalInversions += mergeSort(first, middle);
+    totalInversions += mergeSort(middle, last);
+    totalInversions += stableMerge(first, middle, last);
     // And merge them
-    stableMerge(first, middle, last);
+    return totalInversions;
 }
 
+template<typename RAIter>
+size_t inversions(RAIter first, RAIter last){
+    return mergeSort(first, last);
+}
 #endif // #ifndef INVERSIONS

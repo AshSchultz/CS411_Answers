@@ -1,0 +1,5 @@
+Build Command:
+
+In `CS411_Answers/` directory:
+
+`g++ -fdiagnostics-color=always -Wall -ggdb cs411-2025-03/bridges_test.cpp exhaustive_search/bridges.cpp -I exhaustive_search/ -idirafter doctest/doctest/ -o build/exhaustive_search`

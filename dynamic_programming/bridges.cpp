@@ -2,11 +2,13 @@
  * bridges.cpp
  * Ashley Schultz
  *
+ * LAST MODIFIED: 2025-11-01
  * Solution for CS411 HW 2
  * Source file for bridges function
  */
 
 #include "bridges.hpp"
+#include <algorithm>
 /*
  * Takes two bridges west cities (a and c) and east cities (b and d)
  * then checks if the bridges overlap.
@@ -79,6 +81,11 @@ int bridges(int w, int e, const vector<Bridge> &bridges) {
   vector<size_t> chosen;
   // Index of bridge being checked
   size_t index = 0;
+  // Sort with respect to west city
+  auto comp = [](Bridge a, Bridge b) {
+    return a[0] < b[0];
+  };
+  std::sort(bridges.begin(), bridges.end(), comp);
   // Recursive function to exhaustively search bridge combinations
   return bridges_helper(bridges, chosen, index);
 }

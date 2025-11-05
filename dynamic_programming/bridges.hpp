@@ -1,7 +1,7 @@
 /**
  * bridges.hpp
  * by: Ashley Schultz
- * LAST MODIFIED: 2025-11-03
+ * LAST MODIFIED: 2025-11-04
  * Header for bridges function and solution for CS411 HW 2
  */
 #ifndef BRIDGES_HPP

@@ -9,7 +9,7 @@
 
 #include "bridges.hpp"
 #include <algorithm>
-//For std::sort and std::remove_if
+// For std::sort and std::remove_if
 
 // For the memory function to tell if it has calculated the value or not
 #define UNKNOWN_VALUE -1
@@ -26,49 +26,47 @@ inline bool bridge_invalid(int a, int b, int c, int d) {
  * Recursive function that recursively checks
  * all valid bridge combinations and finds the maximum toll.
  *
- * @param index current index of the bridges array the function checks
+ * @param start iterator that points to the start of the bridges array
  * @param chosen chosen bridges in the current iteration
  * @param bridges list of bridges, see main function
  *
  * Preconditions:
- * 	bridges is a vector of vectors of size 3
- * 	chosen is empty initially
- * 	index is zero initially
+ *  start and end point to valid, sorted data, with equal bridges (bridges who have the same
+ *  west and east cities)
+ * 	toll_table is filled with UNKOWN_VALUES equal to the size of bridges
+ *  
  */
-int bridges_helper(const vector<Bridge> &bridges, vector<size_t> &chosen,
-                   size_t index, vector<size_t> & toll_table) {
-  
+int bridges_helper(const vector<Bridge>::const_iterator start,
+                   const vector<Bridge>::const_iterator end,
+                   vector<size_t> &toll_table, int next_w = -1,
+                   int next_e = -1) {
+
   // BASE CASE
-  // looked through all bridges, index is the size
-  if (index >= bridges.size()) {
+  // looked through all bridges
+  if (start == end) {
     return 0;
   }
   // RECURSIVE CASE
   // Try solutions without the bridge
-  int no_bridge_toll = bridges_helper(bridges, chosen, index + 1, toll_table);
-  Bridge curr = bridges[index];
+  int no_bridge_toll =
+      bridges_helper(start + 1, end, toll_table, next_w, next_e);
+  Bridge curr = *start;
   // Check solution
-  for (auto bridge_index : chosen) {
-    Bridge chosen_bridge = bridges[bridge_index];
-    if (bridge_invalid(curr[0], chosen_bridge[0], curr[1], chosen_bridge[1])) {
-      // If solution doesn't work with the bridge, return the toll without the
-      // current bridge
-      return no_bridge_toll;
-    }
+  if (!(curr[0] > next_w && curr[1] > next_e)) {
+    // If solution doesn't work with the bridge, return the toll without the
+    // current bridge
+    return no_bridge_toll;
   }
 
   int with_bridge_toll = 0;
-  if (toll_table[index] != UNKNOWN_VALUE)
-  {
-    with_bridge_toll = toll_table[index];
+  size_t r_index = std::distance(start + 1, end);
+  if (toll_table[r_index] != UNKNOWN_VALUE) {
+    with_bridge_toll = toll_table[r_index];
   } else {
-    // Try solutions with the current bridge
-    chosen.push_back(index);
-    with_bridge_toll = bridges_helper(bridges, chosen, index + 1, toll_table);
+    with_bridge_toll =
+        bridges_helper(start + 1, end, toll_table, curr[0], curr[1]);
     with_bridge_toll += curr[2];
-    toll_table[index] = with_bridge_toll;
-    // We have tried all solutions with the current bridge, pop it
-    chosen.pop_back();
+    toll_table[r_index] = with_bridge_toll;
   }
   return no_bridge_toll > with_bridge_toll ? no_bridge_toll : with_bridge_toll;
 }
@@ -77,11 +75,13 @@ int bridges_helper(const vector<Bridge> &bridges, vector<size_t> &chosen,
 // sorts the input
 // @param bridges vector of Bridges
 void remove_equal_sort(vector<Bridge> &bridges) {
-    std::sort(bridges.begin(), bridges.end(), [](const Bridge & a, const Bridge & b) {
-    return a[0] < b[0] || // West City
-           (a[0] == b[0] && a[1] < b[1]) ||  // Then East City
-           (a[0] == b[0] && a[1] == b[1] && a[2] > b[2]); // Then Toll Descending Order
-  });
+  std::sort(bridges.begin(), bridges.end(),
+            [](const Bridge &a, const Bridge &b) {
+              return a[0] < b[0] ||                   // West City
+                     (a[0] == b[0] && a[1] < b[1]) || // Then East City
+                     (a[0] == b[0] && a[1] == b[1] &&
+                      a[2] > b[2]); // Then Toll Descending Order
+            });
 
   int last_e = -1, last_w = -1;
   auto it = std::remove_if(bridges.begin(), bridges.end(), [&](Bridge a) {
@@ -110,7 +110,7 @@ void remove_equal_sort(vector<Bridge> &bridges) {
  */
 int bridges(int w, int e, const vector<Bridge> &bridges) {
   // Array of indecies of chosen bridges
-  vector<size_t> chosen;
+  // vector<size_t> chosen;
   // Index of bridge being checked
   size_t index = 0;
 
@@ -118,8 +118,7 @@ int bridges(int w, int e, const vector<Bridge> &bridges) {
 
   vector<size_t> toll_table(bridge_copy.size(), UNKNOWN_VALUE);
 
-
   remove_equal_sort(bridge_copy);
   // Recursive function to exhaustively search bridge combinations
-  return bridges_helper(bridge_copy, chosen, index, toll_table);
+  return bridges_helper(bridge_copy.begin(), bridge_copy.end(), toll_table);
 }

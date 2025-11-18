@@ -7,6 +7,7 @@
  */
 
 #include "bridges.hpp"
+#include <cstddef>
 /*
  * Takes two bridges west cities (a and c) and east cities (b and d)
  * then checks if the bridges overlap.

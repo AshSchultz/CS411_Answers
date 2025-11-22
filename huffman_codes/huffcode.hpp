@@ -13,7 +13,8 @@
 // For std::string
 #include <unordered_map>
 // For std::unordered_map;
-
+#include <queue>
+// For std::priority_queue
 
 // Class HuffCode
 // Encoding & decoding using a Huffman code
@@ -35,6 +36,14 @@ public:
 
 // ***** HuffCode: data members *****
 private:
+    struct huffNode
+    {
+        int weight;
+        char character;
+        huffNode *left;
+        huffNode *right;
+    };
+    huffNode *src;
 
 };  // End class HuffCode
 

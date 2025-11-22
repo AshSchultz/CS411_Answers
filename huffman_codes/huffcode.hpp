@@ -20,33 +20,28 @@
 // Encoding & decoding using a Huffman code
 class HuffCode {
 
-// ***** HuffCode: ctors, dctor, op= *****
+  // ***** HuffCode: ctors, dctor, op= *****
 public:
+  // Compiler-generated default ctor, copy ctor, copy =, dctor used
 
-    // Compiler-generated default ctor, copy ctor, copy =, dctor used
-
-// ***** HuffCode: general public functions *****
+  // ***** HuffCode: general public functions *****
 public:
+  void setWeights(const std::unordered_map<char, int> &theweights);
 
-    void setWeights(const std::unordered_map<char, int> & theweights);
+  std::string encode(const std::string &text) const;
 
-    std::string encode(const std::string & text) const;
+  std::string decode(const std::string &codestr) const;
 
-    std::string decode(const std::string & codestr) const;
-
-// ***** HuffCode: data members *****
+  // ***** HuffCode: data members *****
 private:
-    struct huffNode
-    {
-        int weight;
-        char character;
-        huffNode *left;
-        huffNode *right;
-    };
-    huffNode *src;
+  struct huffNode {
+    int weight;
+    char character;
+    huffNode *left;
+    huffNode *right;
+  };
+  huffNode *src;
 
-};  // End class HuffCode
+}; // End class HuffCode
 
-
-#endif //#ifndef FILE_HUFFCODE_HPP_INCLUDED
-
+#endif // #ifndef FILE_HUFFCODE_HPP_INCLUDED

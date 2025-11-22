@@ -49,10 +49,6 @@ string HuffCode::encode(const string & text) const
     {
         return "";
     }
-    else
-    {
-        this->printTree(src);
-    }
     
     // TODO: WRITE THIS!!!
     return "";  // DUMMY

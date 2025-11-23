@@ -23,7 +23,7 @@ class HuffCode {
   // ***** HuffCode: ctors, dctor, op= *****
 public:
   // Compiler-generated default ctor, copy ctor, copy =, dctor used
-
+  ~HuffCode();
   // ***** HuffCode: general public functions *****
 public:
   void setWeights(const std::unordered_map<char, int> &theweights);
@@ -37,11 +37,20 @@ private:
   struct huffNode {
     int weight;
     char character;
-    huffNode *left;
-    huffNode *right;
+    huffNode *left = nullptr;
+    huffNode *right = nullptr;
   };
+
+  class Compare {
+  public:
+    bool operator()(huffNode *a, huffNode *b) { return a->weight > b->weight; };
+  };
+
   huffNode *src;
 
+  std::string encodeChar(const char a, huffNode *tree, std::string str,
+                    bool &found) const;
+  void deallocateTree(huffNode *node);
 }; // End class HuffCode
 
 #endif // #ifndef FILE_HUFFCODE_HPP_INCLUDED

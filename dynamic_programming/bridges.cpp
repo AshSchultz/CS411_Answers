@@ -12,7 +12,7 @@
 // For std::sort, std::max, and std::remove_if
 
 // For the memory function to tell if it has calculated the value or not
-constexpr int UNKNOWN_VALUE = -1;
+constexpr size_t UNKNOWN_VALUE = -1;
 
 /**
  * Recursive function that recursively checks

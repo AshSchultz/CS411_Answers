@@ -14,22 +14,25 @@ using std::pair;
 using std::unordered_map;
 using std::vector;
 #include <iostream>
+#include <memory>
+using std::make_shared;
+using std::shared_ptr;
 
 void HuffCode::setWeights(const unordered_map<char, int> &theweights) {
-  std::priority_queue<huffNode *, vector<huffNode *>, Compare> pq;
+  std::priority_queue<shared_ptr<huffNode>, vector<shared_ptr<huffNode>>, Compare> pq;
   for (auto weight : theweights) {
-    huffNode *node = new huffNode;
+    auto node =  make_shared<huffNode>();
     node->weight = weight.second;
     node->character = weight.first;
     pq.push(node);
   }
 
-  while (pq.size() >= 2) {
-    huffNode *l = pq.top();
+  while (pq.size() > 1) {
+    auto l = pq.top();
     pq.pop();
-    huffNode *r = pq.top();
+    auto r = pq.top();
     pq.pop();
-    huffNode *newNode = new huffNode;
+    auto newNode = make_shared<huffNode>();
     newNode->character = '$';
     newNode->left = l;
     newNode->right = r;
@@ -40,42 +43,29 @@ void HuffCode::setWeights(const unordered_map<char, int> &theweights) {
   src = pq.top();
 }
 
-// void printTree(const huffNode *curr){
-//     if (curr == nullptr)
-//     {
-//         return;
-//     }
-//     std::cout << curr->weight;
-//     if(curr->character) {
-//         std::cout << " " << curr->character;
-//     }
-//     std::cout << std::endl;
+string HuffCode::encodeChar(const char &a, shared_ptr<huffNode> tree, string str, bool &found) const {
+  string huffstring;
 
-//     printTree(curr->left);
-//     printTree(curr->right);
-// }
+  if (huffMap[a] != "") {
+    return huffMap[a];
+  }
 
-string HuffCode::encodeChar(const char a, huffNode *tree, string str, bool &found) const {
   if (tree == nullptr) {
-    found = false;
     return "";
   }
 
-  if (tree->character != '$') {
-    if (tree->character == a) {
+  if (tree->character == a) {
       found = true;
       return str;
-    }
   }
-  string huffstring = encodeChar(a, tree->left, str + '0', found);
+
+  huffstring.append(encodeChar(a, tree->left, str + '0', found));
+  huffstring.append(encodeChar(a, tree->right, str + '1', found));
   if (found) {
+    huffMap[a] = huffstring;
     return huffstring;
-  } else {
-    huffstring = encodeChar(a, tree->right, str + '1', found);
-    if (found) {
-      return huffstring;
-    }
   }
+
   return "";
 }
 
@@ -83,29 +73,19 @@ string HuffCode::encode(const string &text) const {
   if (!src) {
     return "";
   }
+
   string encodedText;
   for (size_t i = 0; i < text.length(); i++) {
     bool found = false;
-    encodedText.append(encodeChar(text[i], src, encodedText, found));
+    string str("");
+    encodedText.append(encodeChar(text[i], src, str, found));
   }
-  std::cout << encodedText << "\n";
-  return encodedText; // DUMMY
+
+  return encodedText;
 }
+
 
 string HuffCode::decode(const string &codestr) const {
-  // TODO: WRITE THIS!!!
-  return ""; // DUMMY
+  
+  return "";
 }
-
-void HuffCode::deallocateTree(huffNode *node) {
-  // do nothing if passed a non-existent node
-  if (node == nullptr) {
-    return;
-  }
-  // now onto each branch of the binary tree
-  deallocateTree(node->left);
-  deallocateTree(node->right);
-  delete[] node;
-}
-
-HuffCode::~HuffCode() { deallocateTree(src); }

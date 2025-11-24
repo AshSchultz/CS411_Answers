@@ -15,6 +15,8 @@
 // For std::unordered_map;
 #include <queue>
 // For std::priority_queue
+#include <memory>
+// For std::shared_ptr
 
 // Class HuffCode
 // Encoding & decoding using a Huffman code
@@ -22,8 +24,9 @@ class HuffCode {
 
   // ***** HuffCode: ctors, dctor, op= *****
 public:
+  
   // Compiler-generated default ctor, copy ctor, copy =, dctor used
-  ~HuffCode();
+
   // ***** HuffCode: general public functions *****
 public:
   void setWeights(const std::unordered_map<char, int> &theweights);
@@ -37,20 +40,22 @@ private:
   struct huffNode {
     int weight;
     char character;
-    huffNode *left = nullptr;
-    huffNode *right = nullptr;
+    std::shared_ptr<huffNode> left = nullptr;
+    std::shared_ptr<huffNode> right = nullptr;
   };
 
   class Compare {
   public:
-    bool operator()(huffNode *a, huffNode *b) { return a->weight > b->weight; };
+    bool operator()(std::shared_ptr<huffNode> a, std::shared_ptr<huffNode> b) { return a->weight > b->weight; };
   };
 
-  huffNode *src;
+  std::shared_ptr<huffNode> src;
 
-  std::string encodeChar(const char a, huffNode *tree, std::string str,
+  mutable std::unordered_map<char, std::string> huffMap;
+
+  std::string encodeChar(const char &a, std::shared_ptr<huffNode> tree, std::string str,
                     bool &found) const;
-  void deallocateTree(huffNode *node);
+
 }; // End class HuffCode
 
 #endif // #ifndef FILE_HUFFCODE_HPP_INCLUDED

@@ -24,7 +24,6 @@ class HuffCode {
 
   // ***** HuffCode: ctors, dctor, op= *****
 public:
-  
   // Compiler-generated default ctor, copy ctor, copy =, dctor used
 
   // ***** HuffCode: general public functions *****
@@ -46,15 +45,17 @@ private:
 
   class Compare {
   public:
-    bool operator()(std::shared_ptr<huffNode> a, std::shared_ptr<huffNode> b) { return a->weight > b->weight; };
+    bool operator()(std::shared_ptr<huffNode> a, std::shared_ptr<huffNode> b) {
+      return a->weight > b->weight;
+    };
   };
 
   std::shared_ptr<huffNode> src;
 
   mutable std::unordered_map<char, std::string> huffMap;
 
-  std::string encodeChar(const char &a, std::shared_ptr<huffNode> tree, std::string str,
-                    bool &found) const;
+  std::string encodeChar(const char &a, std::shared_ptr<huffNode> tree,
+                         std::string str, bool &found) const;
 
 }; // End class HuffCode
 

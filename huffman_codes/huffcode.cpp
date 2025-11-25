@@ -1,6 +1,8 @@
-// huffcode.cpp  SKELETON
-// Glenn G. Chappell
-// 2025-11-10
+// huffcode.cpp
+//
+// Ashley Schultz
+// Glenn G. Chappell wrote the skeleton
+// 2025-11-25
 //
 // For CS 411 Fall 2025
 // Assignment 6, Exercise A
@@ -22,6 +24,8 @@ void HuffCode::setWeights(const unordered_map<char, int> &theweights) {
   std::priority_queue<shared_ptr<huffNode>, vector<shared_ptr<huffNode>>,
                       Compare>
       pq;
+
+  // Create leaf nodes
   for (auto weight : theweights) {
     auto node = make_shared<huffNode>();
     node->weight = weight.second;
@@ -29,12 +33,14 @@ void HuffCode::setWeights(const unordered_map<char, int> &theweights) {
     pq.push(node);
   }
 
+  // Create full tree
   while (pq.size() > 1) {
     auto l = pq.top();
     pq.pop();
     auto r = pq.top();
     pq.pop();
     auto newNode = make_shared<huffNode>();
+    // Set each non leaf node to null character
     newNode->character = '\0';
     newNode->left = l;
     newNode->right = r;
@@ -45,6 +51,7 @@ void HuffCode::setWeights(const unordered_map<char, int> &theweights) {
   src = pq.top();
 }
 
+// Internal workhorse function that recursively encodes a character using the huffman tree created in setWeights()
 string HuffCode::encodeChar(const char &a, shared_ptr<huffNode> tree,
                             string str, bool &found) const {
   string huffstring;
@@ -62,6 +69,7 @@ string HuffCode::encodeChar(const char &a, shared_ptr<huffNode> tree,
     return str;
   }
 
+  // Encode left subtree
   huffstring.append(encodeChar(a, tree->left, str + '0', found));
 
   if (found) {
@@ -69,6 +77,7 @@ string HuffCode::encodeChar(const char &a, shared_ptr<huffNode> tree,
     return huffstring;
   }
 
+  // Encode right subtree
   huffstring.append(encodeChar(a, tree->right, str + '1', found));
 
   if (found) {
@@ -99,6 +108,8 @@ string HuffCode::decode(const string &codestr) const {
   string decodedText;
 
   auto temp = src;
+  // Go through each binary '1' or '0' character, 
+  // traverse the tree depending on the character until a character is found
   for (size_t i = 0; i < codestr.length(); i++) {
     if (codestr[i] == '0') {
       temp = temp->left;
